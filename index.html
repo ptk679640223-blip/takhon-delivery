@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>တံခွန် Delivery - Ta Khon Delivery System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-100 font-sans">
+
+    <!-- Top Role Switcher Header -->
+    <header class="bg-red-700 text-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-motorcycle text-2xl"></i>
+                <h1 class="text-xl font-bold">တံခွန် Delivery</h1>
+            </div>
+            <div class="flex space-x-1 bg-red-800 p-1 rounded-lg">
+                <button onclick="switchView('customer')" id="btn-customer" class="px-3 py-1.5 rounded-md text-sm font-medium bg-white text-red-700 transition">သုံးစွဲသူ (Customer)</button>
+                <button onclick="switchView('rider')" id="btn-rider" class="px-3 py-1.5 rounded-md text-sm font-medium text-white transition">ပို့ဆောင်သူ (Rider)</button>
+                <button onclick="switchView('admin')" id="btn-admin" class="px-3 py-1.5 rounded-md text-sm font-medium text-white transition">မန်နေဂျာ (Admin)</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 max-w-4xl">
+
+        <!-- 1. CUSTOMER VIEW -->
+        <section id="view-customer" class="space-y-4">
+            <div class="bg-white p-5 rounded-xl shadow-md">
+                <h2 class="text-lg font-bold text-slate-800 mb-4"><i class="fa-solid fa-box text-red-600 mr-2"></i>ပစ္စည်းပို့ရန် အော်ဒါတင်မည်</h2>
+                
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-600">ပစ္စည်းယူမည့်နေရာ (Pickup Address)</label>
+                        <input type="text" id="c-pickup" placeholder="ဥပမာ - အမှတ် (၁၂)၊ ဗိုလ်ချုပ်လမ်း၊ ရန်ကုန်" class="w-full mt-1 p-2.5 border rounded-lg focus:ring-2 focus:ring-red-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-600">ပို့ဆောင်ရမည့်နေရာ (Dropoff Address)</label>
+                        <input type="text" id="c-dropoff" placeholder="ဥပမာ - အမှတ် (၄၅)၊ ကျောက်မြောင်း၊ ရန်ကုန်" class="w-full mt-1 p-2.5 border rounded-lg focus:ring-2 focus:ring-red-500 outline-none">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600">ပစ္စည်းအမျိုးအစား</label>
+                            <select id="c-type" class="w-full mt-1 p-2.5 border rounded-lg bg-white">
+                                <option>အထည်အလိပ် / ဖက်ရှင်</option>
+                                <option>အလှကုန် & အသုံးအဆောင်</option>
+                                <option>အစားအသောက် & မုန့်</option>
+                                <option>စာရွက်စာတမ်း & ပစ္စည်းအသေး</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600">ငွေပေးချေမှုပုံစံ</label>
+                            <select id="c-payment" class="w-full mt-1 p-2.5 border rounded-lg bg-white">
+                                <option>Cash on Delivery (COD)</option>
+                                <option>KBZPay</option>
+                                <option>Wave Money</option>
+                                <option>AYA Pay</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button onclick="placeOrder()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold p-3 rounded-lg shadow transition mt-2">
+                        အော်ဒါတင်မည် (Place Order)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Customer Tracking Box -->
+            <div id="tracking-box" class="bg-white p-5 rounded-xl shadow-md hidden">
+                <h3 class="font-bold text-slate-800 mb-2">📍 အော်ဒါအခြေအနေ (Live Tracking)</h3>
+                <div class="p-4 bg-slate-50 rounded-lg border flex justify-between items-center">
+                    <div>
+                        <p class="text-sm text-slate-500">Tracking ID: <span class="font-mono font-bold text-red-600">#TK-8892</span></p>
+                        <p class="text-base font-bold text-slate-700 mt-1" id="order-status-text">Rider က ပစ္စည်းလာယူနေပါပြီ...</p>
+                    </div>
+                    <span class="bg-amber-100 text-amber-800 text-xs px-3 py-1 rounded-full font-bold animate-pulse">Delivery လုပ်နေဆဲ</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. RIDER VIEW -->
+        <section id="view-rider" class="space-y-4 hidden">
+            <div class="bg-white p-5 rounded-xl shadow-md flex justify-between items-center">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800">🛵 Rider Dashboard</h2>
+                    <p class="text-sm text-slate-500">အလုပ်လုပ်ရန် အသင့်အနေအထား</p>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm font-bold text-emerald-600">Online</span>
+                    <input type="checkbox" checked class="w-5 h-5 accent-emerald-600 cursor-pointer">
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl shadow-md space-y-4">
+                <h3 class="font-bold text-slate-800 border-b pb-2">ဝင်လာသော အော်ဒါများ (Incoming Orders)</h3>
+                
+                <div class="p-4 border rounded-xl bg-slate-50 space-y-2">
+                    <div class="flex justify-between">
+                        <span class="font-bold text-red-600">#TK-8892</span>
+                        <span class="text-sm font-semibold text-slate-600">ပို့ဆောင်ခ: ၃,၅၀၀ ကျပ်</span>
+                    </div>
+                    <p class="text-sm text-slate-700"><strong>မှ:</strong> ဗိုလ်ချုပ်လမ်း၊ ရန်ကုန်</p>
+                    <p class="text-sm text-slate-700"><strong>သို့:</strong> ကျောက်မြောင်း၊ ရန်ကုန်</p>
+                    <div class="flex space-x-2 pt-2">
+                        <button onclick="acceptOrder()" class="flex-1 bg-emerald-600 text-white py-2 rounded-lg font-bold hover:bg-emerald-700 transition">လက်ခံမည် (Accept)</button>
+                        <button class="px-4 py-2 border border-slate-300 text-slate-600 rounded-lg font-bold hover:bg-slate-100 transition">ငြင်းပယ်</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        
